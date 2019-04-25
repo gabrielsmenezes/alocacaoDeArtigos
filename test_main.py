@@ -68,10 +68,35 @@ def test_limiteArtigosParaCadaRevisorFalse():
     
     assert valorEsperado == valorRetornado
 
+def test_validarEstado_HappyDay():
 
-# def test_validarEstado_HappyDay():
-#     valorEsperado = True
+    valorEsperado = True
 
-#     valorRetornado = main.validarEstado([3,2,1,4,4])
+    valorRetornado = main.validarEstado(artigos=[3,2,1,4,4], revisores=revisores)
 
-#     assert valorEsperado == valorRetornado
+    assert valorEsperado == valorRetornado
+
+def test_validarEstado_ArtigoSemRevisor():
+
+    valorEsperado = False
+
+    valorRetornado = main.validarEstado(artigos=[3,2,1,4,-1], revisores=revisores)
+
+    assert valorEsperado == valorRetornado
+
+def test_validarEstado_ArtigoSemRevisor():
+
+    valorEsperado = False
+
+    valorRetornado = main.validarEstado(artigos=[3,2,1,4,-1], revisores=revisores)
+
+    assert valorEsperado == valorRetornado
+
+def test_validarEstado_ArtigoSemRevisor():
+
+    valorEsperado = False
+
+    valorRetornado = main.validarEstado(artigos=[1,1,1,1,1], revisores=revisores)
+
+    assert valorEsperado == valorRetornado
+

@@ -32,7 +32,5 @@ def limiteArtigosParaCadaRevisor(revisores, artigos):
             return False
     return True
 
-# def validarEstado();
-#     #nenhum artigo sem revisor
-#     todosArtigosComRevisor(artigo)
-#     #nenhum revisor com mais artigos que o maximo que ele pode
+def validarEstado(revisores, artigos):
+    return todosArtigosComRevisor(artigos) and limiteArtigosParaCadaRevisor(revisores, artigos)
