@@ -21,6 +21,17 @@ def criarRevisores(matriz):
 def todosArtigosComRevisor(artigos):
     return not -1 in artigos
 
+def limiteArtigosParaCadaRevisor(revisores, artigos):
+    numeroDeArtigosParaCadaRevisor = [0] * len(revisores)
+    for i in range (len(artigos)):
+        print(artigos[i])
+        numeroDeArtigosParaCadaRevisor[artigos[i]-1] = numeroDeArtigosParaCadaRevisor[artigos[i]-1] + 1
+    print(numeroDeArtigosParaCadaRevisor)
+    for i in range (len(revisores)):
+        if (revisores[i].getQuantidadeMaximaDeArtigos() < numeroDeArtigosParaCadaRevisor[i]):
+            return False
+    return True
+
 # def validarEstado();
 #     #nenhum artigo sem revisor
 #     todosArtigosComRevisor(artigo)
