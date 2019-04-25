@@ -100,3 +100,5 @@ def test_validarEstado_ArtigoSemRevisor():
 
     assert valorEsperado == valorRetornado
 
+def test_criarPopulacao():
+    assert individuo.
