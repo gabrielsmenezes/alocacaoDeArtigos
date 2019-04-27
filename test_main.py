@@ -1,13 +1,13 @@
 import pytest
 import main, Revisor
 
-########### variaveis ###############
+########### variaveis ###########
 
 matrizEsperada = [
-        [0,0,3,4,4,1],
-        [3,3,0,0,1,2],
-        [4,0,0,1,0,1],
-        [2,2,2,3,2,2]
+        [0,0,3,4,4,1], #revisor 0
+        [3,3,0,0,1,2], #revisor 1
+        [4,0,0,1,0,1], #revisor 2
+        [2,2,2,3,2,2] #revisor 3
     ]
 
 artigos = [3,2,1,4,4]
@@ -18,7 +18,7 @@ for vetor in matrizEsperada:
     revisores.append(revisor)
 
 
-########### testes ###############
+########### testes ###########
 
 
 def test_lerArquivoDeEntrada():
@@ -101,4 +101,9 @@ def test_validarEstado_ArtigoSemRevisor():
     assert valorEsperado == valorRetornado
 
 def test_criarPopulacao():
-    assert individuo.
+    valorEsperado = 8
+    
+    valorRetornado = main.criarPopulacao(revisores)
+    print(valorRetornado)
+
+    assert valorEsperado == valorRetornado

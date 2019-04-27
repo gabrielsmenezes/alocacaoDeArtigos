@@ -1,4 +1,6 @@
 import Revisor
+import random
+
 def lerArquivoDeEntrada(nomeDoArquivo):
     arquivo = open(nomeDoArquivo)
     matriz = []
@@ -24,9 +26,7 @@ def todosArtigosComRevisor(artigos):
 def limiteArtigosParaCadaRevisor(revisores, artigos):
     numeroDeArtigosParaCadaRevisor = [0] * len(revisores)
     for i in range (len(artigos)):
-        print(artigos[i])
-        numeroDeArtigosParaCadaRevisor[artigos[i]-1] = numeroDeArtigosParaCadaRevisor[artigos[i]-1] + 1
-    print(numeroDeArtigosParaCadaRevisor)
+        numeroDeArtigosParaCadaRevisor[artigos[i]] = numeroDeArtigosParaCadaRevisor[artigos[i]] + 1
     for i in range (len(revisores)):
         if (revisores[i].getQuantidadeMaximaDeArtigos() < numeroDeArtigosParaCadaRevisor[i]):
             return False
@@ -34,3 +34,38 @@ def limiteArtigosParaCadaRevisor(revisores, artigos):
 
 def validarEstado(revisores, artigos):
     return todosArtigosComRevisor(artigos) and limiteArtigosParaCadaRevisor(revisores, artigos)
+
+def criarPopulacao(revisores):
+    populacao = []
+    for j in range(1, 9):
+        while True:
+            artigos = []
+            numeroDeArtigos = len(revisores[0].getListaDeAfinidades())
+            while (numeroDeArtigos > 0):
+                artigos.append(random.randrange(len(revisores)))
+                numeroDeArtigos = numeroDeArtigos - 1
+            if (validarEstado(revisores, artigos)):
+                break
+        populacao.append(artigos)
+    return populacao
+
+def main():
+    matrizEsperada = [
+        [0,0,3,4,4,1],
+        [3,3,0,0,1,2],
+        [4,0,0,1,0,1],
+        [2,2,2,3,2,2]
+    ]
+
+    artigos = [3,2,1,4,4]
+
+    revisores = []
+    for vetor in matrizEsperada:
+        revisor = Revisor.Revisor(listaDeAfinidades= vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
+        revisores.append(revisor)
+
+    for individuo in criarPopulacao(revisores):
+        print (individuo)
+
+
+main()
