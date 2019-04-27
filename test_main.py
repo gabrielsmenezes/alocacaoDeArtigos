@@ -17,14 +17,15 @@ for vetor in matrizEsperada:
     revisor = Revisor.Revisor(listaDeAfinidades= vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
     revisores.append(revisor)
 
+populacao = main.criarPopulacao(revisores)
 
 ########### testes ###########
 
 
 def test_lerArquivoDeEntrada():
-    #action
+    
     matrizRetornado = main.lerArquivoDeEntrada("entrada.txt")
-    #assert
+    
     assert matrizEsperada == matrizRetornado
 
 def test_criarRevisores():
@@ -84,15 +85,7 @@ def test_validarEstado_ArtigoSemRevisor():
 
     assert valorEsperado == valorRetornado
 
-def test_validarEstado_ArtigoSemRevisor():
-
-    valorEsperado = False
-
-    valorRetornado = main.validarEstado(artigos=[3,2,1,4,-1], revisores=revisores)
-
-    assert valorEsperado == valorRetornado
-
-def test_validarEstado_ArtigoSemRevisor():
+def test_validarEstado_UltrapassandoLimiteDeUmRevisor():
 
     valorEsperado = False
 
@@ -103,7 +96,14 @@ def test_validarEstado_ArtigoSemRevisor():
 def test_criarPopulacao():
     valorEsperado = 8
     
-    valorRetornado = main.criarPopulacao(revisores)
+    valorRetornado = populacao
     valorRetornado = len(valorRetornado)
+
+    assert valorEsperado == valorRetornado
+
+def test_transformaPopulacaoEmIndividuos():
+    valorEsperado = 8
+
+    valorRetornado = len(main.transformaPopulacaoEmIndividuos(populacao))
 
     assert valorEsperado == valorRetornado

@@ -1,5 +1,6 @@
 import Revisor
 import random
+import Individuo
 
 def lerArquivoDeEntrada(nomeDoArquivo):
     arquivo = open(nomeDoArquivo)
@@ -49,6 +50,12 @@ def criarPopulacao(revisores):
         populacao.append(artigos)
     return populacao
 
+def transformaPopulacaoEmIndividuos(populacao):
+    populacaoDeIndividuos = []
+    for individuo in populacao:
+        populacaoDeIndividuos.append(Individuo.Individuo(artigos=individuo))
+    return populacaoDeIndividuos
+
 def main():
     matrizEsperada = [
         [0,0,3,4,4,1],
@@ -68,4 +75,4 @@ def main():
         print (individuo)
 
 
-main()
+# main()
