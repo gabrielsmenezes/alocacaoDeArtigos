@@ -10,7 +10,7 @@ matrizEsperada = [
         [2,2,2,3,2,2] #revisor 3
     ]
 
-artigos = [3,2,1,4,4]
+artigos = [2,1,0,3,3]
 
 revisores = []
 for vetor in matrizEsperada:
@@ -63,7 +63,7 @@ def test_limiteArtigosParaCadaRevisorTrue():
 
 def test_limiteArtigosParaCadaRevisorFalse():
     valorEsperado = False
-    artigosAlterados = [4,4,4,4,4]
+    artigosAlterados = [3,3,3,3,3]
     valorRetornado = main.limiteArtigosParaCadaRevisor(revisores=revisores, artigos=artigosAlterados)
     
     assert valorEsperado == valorRetornado
@@ -72,7 +72,7 @@ def test_validarEstado_HappyDay():
 
     valorEsperado = True
 
-    valorRetornado = main.validarEstado(artigos=[3,2,1,4,4], revisores=revisores)
+    valorRetornado = main.validarEstado(artigos=[2,1,0,3,3], revisores=revisores)
 
     assert valorEsperado == valorRetornado
 
@@ -104,6 +104,6 @@ def test_criarPopulacao():
     valorEsperado = 8
     
     valorRetornado = main.criarPopulacao(revisores)
-    print(valorRetornado)
+    valorRetornado = len(valorRetornado)
 
     assert valorEsperado == valorRetornado
