@@ -44,8 +44,8 @@ def test_criarRevisores():
     for vetor in matrizEsperada:
         revisor = Revisor.Revisor(listaDeAfinidades= vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
         revisores.append(revisor)
-
-    revisoresRetornados = main.criarRevisores(matrizEsperada)
+    main.criarRevisores(matrizEsperada)
+    revisoresRetornados = main.revisores
 
     for revisorEsperado, revisorRetornado in zip(revisores, revisoresRetornados):
         assert revisorEsperado.getListaDeAfinidades() == revisorRetornado.getListaDeAfinidades()
@@ -69,14 +69,14 @@ def test_todosArtigosComRevisorFalse():
 def test_limiteArtigosParaCadaRevisorTrue():
     valorEsperado = True
 
-    valorRetornado = main.limiteArtigosParaCadaRevisor(revisores=revisores, artigos=artigos)
+    valorRetornado = main.limiteArtigosParaCadaRevisor(artigos=artigos)
     
     assert valorEsperado == valorRetornado
 
 def test_limiteArtigosParaCadaRevisorFalse():
     valorEsperado = False
     artigosAlterados = [3,3,3,3,3]
-    valorRetornado = main.limiteArtigosParaCadaRevisor(revisores=revisores, artigos=artigosAlterados)
+    valorRetornado = main.limiteArtigosParaCadaRevisor(artigos=artigosAlterados)
     
     assert valorEsperado == valorRetornado
 
@@ -84,7 +84,7 @@ def test_validarEstado_HappyDay():
 
     valorEsperado = True
 
-    valorRetornado = main.validarEstado(artigos=[2,1,0,3,3], revisores=revisores)
+    valorRetornado = main.validarEstado(artigos=[2,1,0,3,3])
 
     assert valorEsperado == valorRetornado
 
@@ -92,22 +92,20 @@ def test_validarEstado_ArtigoSemRevisor():
 
     valorEsperado = False
 
-    valorRetornado = main.validarEstado(artigos=[3,2,1,4,-1], revisores=revisores)
-
+    valorRetornado = main.validarEstado(artigos=[3,2,1,4,-1])
     assert valorEsperado == valorRetornado
 
 def test_validarEstado_UltrapassandoLimiteDeUmRevisor():
 
     valorEsperado = False
 
-    valorRetornado = main.validarEstado(artigos=[1,1,1,1,1], revisores=revisores)
-
+    valorRetornado = main.validarEstado(artigos=[1,1,1,1,1]) 
     assert valorEsperado == valorRetornado
 
 def test_criarPopulacao():
     valorEsperado = 8
     
-    valorRetornado = main.criarPopulacao(revisores)
+    valorRetornado = main.criarPopulacao()
     valorRetornado = len(valorRetornado)
 
     assert valorEsperado == valorRetornado
@@ -123,7 +121,7 @@ def test_escolheMelhorIndividuo():
 
 	valorEsperado = [3, 1, 0, 3, 1]
 
-	valorRetornado = main.escolheMelhorIndividuo(populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores).getArtigos()
+	valorRetornado = main.escolheMelhorIndividuo(populacaoDeIndividuos=populacaoDeIndividuos).getArtigos()
 
 	assert valorEsperado == valorRetornado
 
@@ -131,34 +129,40 @@ def test_calculaSomatoria():
 
 	valorEsperado = 61
 
-	valorRetornado = main.calculaSomatoria(populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores)
-
+	valorRetornado = main.calculaSomatoria(populacaoDeIndividuos=populacaoDeIndividuos)
 	assert valorEsperado == valorRetornado
 
 def test_calculaGrauDaRoleta():
 	#arrange
 	valorEsperado = 53
 	#action
-	populacao = main.calculaGrauDaRoleta(populacaoDeIndividuos=populacaoDeIndividuos, somatoriaDasFF=61, revisores=revisores)
+	populacao = main.calculaGrauDaRoleta(populacaoDeIndividuos=populacaoDeIndividuos, somatoriaDasFF=61)
 	valorRetornado = populacaoDeIndividuos[0].__grausDaRoleta
-	#assert
+	
 	assert valorEsperado == valorRetornado
 
 def test_escolheIndividuoDaRoletaParaOPrimeiroIndividuo():
 	#arrange
 	valorEsperado = [1, 2, 1, 0, 3]
 	somatoriaDasFF = 61
-	main.calculaGrauDaRoleta(somatoriaDasFF=somatoriaDasFF, populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores)	
-	#action
+
+	main.calculaGrauDaRoleta(somatoriaDasFF=somatoriaDasFF, populacaoDeIndividuos=populacaoDeIndividuos)
 	valorRetornado = main.escolheIndividuoDaRoleta(numeroRandomico=50, populacaoDeIndividuos=populacaoDeIndividuos).getArtigos()
-	#assert
+
 	assert valorEsperado == valorRetornado
 
-
 def test_reproduzir():
-	
 	valorEsperado = 5
 	
-	valorRetornado = len(main.reproduzir(populacaoDeIndividuos[0], populacaoDeIndividuos[1], crossoverrate=1, revisores=revisores).getArtigos())
+	valorRetornado = len(main.reproduzir(populacaoDeIndividuos[0], populacaoDeIndividuos[1], crossoverrate=1).getArtigos())
+	
+	assert valorEsperado == valorRetornado
+
+def test_mutar():
+	
+	valorEsperado = False
+	
+	main.mutar(individuo=populacaoDeIndividuos[0], mutationrate=1, numeroDeRevisores=len(revisores))
+	valorRetornado = populacaoDeIndividuos[0].getArtigos() == [1, 2, 1, 0, 3]
 	
 	assert valorEsperado == valorRetornado

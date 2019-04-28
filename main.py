@@ -2,6 +2,9 @@ import Revisor
 import random
 import Individuo
 
+#####variaveis#####
+revisores = []
+
 def lerArquivoDeEntrada(nomeDoArquivo):
     arquivo = open(nomeDoArquivo)
     matriz = []
@@ -13,18 +16,15 @@ def lerArquivoDeEntrada(nomeDoArquivo):
         matriz.append(vetor)
     return matriz
 
-
 def criarRevisores(matriz):
-    revisores = []
     for vetor in matriz:
         revisor = Revisor.Revisor(listaDeAfinidades=vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
         revisores.append(revisor)
-    return revisores
 
 def todosArtigosComRevisor(artigos):
     return not -1 in artigos
 
-def limiteArtigosParaCadaRevisor(revisores, artigos):
+def limiteArtigosParaCadaRevisor(artigos):
     numeroDeArtigosParaCadaRevisor = [0] * len(revisores)
     for i in range (len(artigos)):
         numeroDeArtigosParaCadaRevisor[artigos[i]] = numeroDeArtigosParaCadaRevisor[artigos[i]] + 1
@@ -33,10 +33,10 @@ def limiteArtigosParaCadaRevisor(revisores, artigos):
             return False
     return True
 
-def validarEstado(revisores, artigos):
-    return todosArtigosComRevisor(artigos) and limiteArtigosParaCadaRevisor(revisores, artigos)
+def validarEstado(artigos):
+    return todosArtigosComRevisor(artigos) and limiteArtigosParaCadaRevisor(artigos)
 
-def criarPopulacao(revisores):
+def criarPopulacao():
     populacao = []
     for j in range(1, 9):
         while True:
@@ -45,7 +45,7 @@ def criarPopulacao(revisores):
             while (numeroDeArtigos > 0):
                 artigos.append(random.randrange(len(revisores)))
                 numeroDeArtigos = numeroDeArtigos - 1
-            if (validarEstado(revisores, artigos)):
+            if (validarEstado(artigos)):
                 break
         populacao.append(artigos)
     return populacao
@@ -56,21 +56,21 @@ def transformaPopulacaoEmIndividuos(populacao):
         populacaoDeIndividuos.append(Individuo.Individuo(artigos=individuo))
     return populacaoDeIndividuos
 
-def escolheMelhorIndividuo(populacaoDeIndividuos, revisores):
+def escolheMelhorIndividuo(populacaoDeIndividuos):
 	melhorIndividuo = populacaoDeIndividuos[0]
 	for individuo in populacaoDeIndividuos:
 		if melhorIndividuo.valorDeFitness(revisores) < individuo.valorDeFitness(revisores):
 			melhorIndividuo = individuo
 	return melhorIndividuo
 
-def calculaSomatoria(populacaoDeIndividuos, revisores):
+def calculaSomatoria(populacaoDeIndividuos):
     somatoriaDasFF = 0
     for individuo in populacaoDeIndividuos:
         somatoriaDasFF = somatoriaDasFF + individuo.valorDeFitness(revisores)
         print(individuo.valorDeFitness(revisores))
     return somatoriaDasFF
 
-def calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF, revisores):
+def calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF):
     for individuo in populacaoDeIndividuos:
         grau = (individuo.valorDeFitness(revisores) * 360) / somatoriaDasFF
         individuo.__grausDaRoleta = grau
@@ -83,13 +83,13 @@ def escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos):
 			return individuo
 		anterior = individuo.__grausDaRoleta + anterior
 
-def selecaoRandomicaDoIndividuoParaReproduzir(populacaoDeIndividuos, revisores):
+def selecaoRandomicaDoIndividuoParaReproduzir(populacaoDeIndividuos):
 	somatoriaDasFF = calculaSomatoria(populacaoDeIndividuos, revisores)
 	calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF, revisores)
 	numeroRandomico = random.randrange(1, 361)
 	return escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos)
 
-def reproduzir(individuo1, individuo2, crossoverrate, revisores):
+def reproduzir(individuo1, individuo2, crossoverrate):
     numeroRandomico = random.random()
 
     if not (numeroRandomico < crossoverrate):
@@ -98,10 +98,50 @@ def reproduzir(individuo1, individuo2, crossoverrate, revisores):
     tamanhoDoIndividuo = len(individuo1.getArtigos())
     pontoDeDivisaoDoIndividuo = random.randrange(0, tamanhoDoIndividuo)
     novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo] )
-    while(not validarEstado(artigos=novoIndividuo.getArtigos(), revisores=revisores)):
+    while(not validarEstado(artigos=novoIndividuo.getArtigos() ) ):
         pontoDeDivisaoDoIndividuo = random.randrange(0, tamanhoDoIndividuo)
         novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo])
     return novoIndividuo
+
+def mutar(individuo, mutationrate, numeroDeRevisores):
+	numeroRandomico = random.random()
+	for posicao in range(0,len(individuo.getArtigos())):
+		if(numeroRandomico < mutationrate):
+			individuo.artigos[posicao] = random.randrange(numeroDeRevisores)
+
+# def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
+# 	valorDeFitnessObjetivo = calculaValorDeFitnessObjetivo()
+# 	geracao = 0
+# 	while maxgen > 0:
+# 		geracao = geracao + 1
+# 		print("Geracao ", geracao)
+
+# 		novaPopulacao = list()
+# 		for x in range(1,(len(populacao))+1):
+			
+# 			#selecao
+# 			individuo1 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
+# 			individuo2 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
+			
+# 			#reproducao
+# 			filho = reproduzir(individuo1, individuo2, crossoverrate)
+# 			#mutacao
+# 			mutar(filho, mutationrate)
+			
+# 			novaPopulacao.append(filho)
+
+# 		populacao = novaPopulacao
+
+# 		for individuo in populacao:
+# 			print(individuo.cromossomos)
+
+# 		maxgen = maxgen - 1
+# 		melhor = escolheMelhorIndividuo(populacao)
+
+# 		if objetivo == melhor.cromossomos:
+# 			return melhor
+
+# 	return escolheMelhorIndividuo(populacao)
 
 def main():
     matrizEsperada = [
