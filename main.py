@@ -56,6 +56,13 @@ def transformaPopulacaoEmIndividuos(populacao):
         populacaoDeIndividuos.append(Individuo.Individuo(artigos=individuo))
     return populacaoDeIndividuos
 
+def escolheMelhorIndividuo(populacaoDeIndividuos, revisores):
+	melhorIndividuo = populacaoDeIndividuos[0]
+	for individuo in populacaoDeIndividuos:
+		if melhorIndividuo.valorDeFitness(revisores) < individuo.valorDeFitness(revisores):
+			melhorIndividuo = individuo
+	return melhorIndividuo
+
 def main():
     matrizEsperada = [
         [0,0,3,4,4,1],

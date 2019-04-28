@@ -18,7 +18,17 @@ for vetor in matrizEsperada:
     revisores.append(revisor)
 
 
-populacao = main.criarPopulacao(revisores)
+populacao = [
+    [1, 2, 1, 0, 3] ,#3+0+0+4+2=9 
+    [0, 3, 1, 1, 2], #0+2+0+0+0=2
+    [3, 2, 1, 3, 0], #2+0+0+3+4=9
+    [3, 1, 0, 3, 1], #2+3+3+3+1=12
+    [0, 1, 3, 1, 3], #0+3+2+4+2=11
+    [1, 3, 0, 1, 2], #3+2+3+0+0=8
+    [3, 0, 1, 3, 2], #2+0+0+3+0=5
+    [1, 0, 3, 3, 1]] #3+0+2+3+1=9
+
+populacaoDeIndividuos = main.transformaPopulacaoEmIndividuos(populacao)
 
 ########### testes ###########
 
@@ -97,7 +107,7 @@ def test_validarEstado_UltrapassandoLimiteDeUmRevisor():
 def test_criarPopulacao():
     valorEsperado = 8
     
-    valorRetornado = populacao
+    valorRetornado = main.criarPopulacao(revisores)
     valorRetornado = len(valorRetornado)
 
     assert valorEsperado == valorRetornado
@@ -105,6 +115,14 @@ def test_criarPopulacao():
 def test_transformaPopulacaoEmIndividuos():
     valorEsperado = 8
 
-    valorRetornado = len(main.transformaPopulacaoEmIndividuos(populacao))
+    valorRetornado = len(populacaoDeIndividuos)
 
     assert valorEsperado == valorRetornado
+
+def test_escolheMelhorIndividuo():
+
+	valorEsperado = [3, 1, 0, 3, 1]
+
+	valorRetornado = main.escolheMelhorIndividuo(populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores).getArtigos()
+
+	assert valorEsperado == valorRetornado
