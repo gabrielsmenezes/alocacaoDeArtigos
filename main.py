@@ -1,6 +1,8 @@
 import Revisor
 import random
 import Individuo
+import sys
+import argparse
 
 #####variaveis#####
 revisores = []
@@ -159,13 +161,33 @@ def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
 
 	return escolheMelhorIndividuo(populacao)
 
+def main(args):
+
+	crossoverrate = args.crossoverrate
+	mutationrate = args.mutationrate
+	maxgen = args.maxgen
+	inputpath = args.inputpath
+
+	arquivoDeEntrada = lerArquivoDeEntrada(inputpath)
+
+	criarRevisores(arquivoDeEntrada)
+
+	populacao = criarPopulacao()
+
+	populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
+	melhor = algoritmoGenetico(populacao=populacaoDeIndividuos, crossoverrate=crossoverrate, mutationrate=mutationrate, maxgen=maxgen)
+	print ("O melhor individuo eh: ", melhor.getArtigos(), "com funcao fitness de ", melhor.valorDeFitness(revisores))
+
+
 #variaveis para testes
-arquivoDeEntrada = lerArquivoDeEntrada("entrada.txt")
+if __name__ == "__main__":
 
-criarRevisores(arquivoDeEntrada)
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-crossoverrate", type=float, required=True)
+	parser.add_argument("-mutationrate", type=float, required=True)
+	parser.add_argument("-maxgen", type=int, default=100)
+	parser.add_argument("-inputpath", type=str, required=True)
 
-populacao = criarPopulacao()
-
-populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
-melhor = algoritmoGenetico(populacaoDeIndividuos, 0.70, 0.1, 100000)
-print ("O melhor individuo eh: ", melhor.getArtigos(), "com funcao fitness de ", melhor.valorDeFitness(revisores))
+	args = parser.parse_args()
+	
+	main(args)	
