@@ -144,3 +144,12 @@ def test_calculaGrauDaRoleta():
 	#assert
 	assert valorEsperado == valorRetornado
 
+def test_escolheIndividuoDaRoletaParaOPrimeiroIndividuo():
+	#arrange
+	valorEsperado = [1, 2, 1, 0, 3]
+	somatoriaDasFF = 61
+	main.calculaGrauDaRoleta(somatoriaDasFF=somatoriaDasFF, populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores)	
+	#action
+	valorRetornado = main.escolheIndividuoDaRoleta(numeroRandomico=50, populacaoDeIndividuos=populacaoDeIndividuos).getArtigos()
+	#assert
+	assert valorEsperado == valorRetornado

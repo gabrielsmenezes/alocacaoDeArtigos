@@ -76,6 +76,14 @@ def calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF, revisores):
         individuo.__grausDaRoleta = grau
     return populacaoDeIndividuos
 
+def escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos):
+	anterior = 0
+	for individuo in populacaoDeIndividuos:
+		if anterior < numeroRandomico and numeroRandomico <= individuo.__grausDaRoleta+anterior:
+			return individuo
+		anterior = individuo.__grausDaRoleta + anterior
+
+
 def main():
     matrizEsperada = [
         [0,0,3,4,4,1],
