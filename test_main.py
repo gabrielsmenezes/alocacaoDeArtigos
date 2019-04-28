@@ -17,6 +17,7 @@ for vetor in matrizEsperada:
     revisor = Revisor.Revisor(listaDeAfinidades= vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
     revisores.append(revisor)
 
+
 populacao = main.criarPopulacao(revisores)
 
 ########### testes ###########
