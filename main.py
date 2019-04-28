@@ -83,6 +83,25 @@ def escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos):
 			return individuo
 		anterior = individuo.__grausDaRoleta + anterior
 
+def selecaoRandomicaDoIndividuoParaReproduzir(populacaoDeIndividuos, revisores):
+	somatoriaDasFF = calculaSomatoria(populacaoDeIndividuos, revisores)
+	calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF, revisores)
+	numeroRandomico = random.randrange(1, 361)
+	return escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos)
+
+def reproduzir(individuo1, individuo2, crossoverrate, revisores):
+    numeroRandomico = random.random()
+
+    if not (numeroRandomico < crossoverrate):
+        return individuo1
+    
+    tamanhoDoIndividuo = len(individuo1.getArtigos())
+    pontoDeDivisaoDoIndividuo = random.randrange(0, tamanhoDoIndividuo)
+    novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo] )
+    while(not validarEstado(artigos=novoIndividuo.getArtigos(), revisores=revisores)):
+        pontoDeDivisaoDoIndividuo = random.randrange(0, tamanhoDoIndividuo)
+        novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo])
+    return novoIndividuo
 
 def main():
     matrizEsperada = [

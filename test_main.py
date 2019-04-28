@@ -153,3 +153,12 @@ def test_escolheIndividuoDaRoletaParaOPrimeiroIndividuo():
 	valorRetornado = main.escolheIndividuoDaRoleta(numeroRandomico=50, populacaoDeIndividuos=populacaoDeIndividuos).getArtigos()
 	#assert
 	assert valorEsperado == valorRetornado
+
+
+def test_reproduzir():
+	
+	valorEsperado = 5
+	
+	valorRetornado = len(main.reproduzir(populacaoDeIndividuos[0], populacaoDeIndividuos[1], crossoverrate=1, revisores=revisores).getArtigos())
+	
+	assert valorEsperado == valorRetornado
