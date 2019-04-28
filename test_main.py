@@ -136,7 +136,7 @@ def test_calculaGrauDaRoleta():
 	#arrange
 	valorEsperado = 53
 	#action
-	populacao = main.calculaGrauDaRoleta(populacaoDeIndividuos=populacaoDeIndividuos, somatoriaDasFF=61)
+	main.calculaGrauDaRoleta(populacaoDeIndividuos=populacaoDeIndividuos, somatoriaDasFF=61)
 	valorRetornado = populacaoDeIndividuos[0].__grausDaRoleta
 	
 	assert valorEsperado == valorRetornado
@@ -166,3 +166,10 @@ def test_mutar():
 	valorRetornado = populacaoDeIndividuos[0].getArtigos() == [1, 2, 1, 0, 3]
 	
 	assert valorEsperado == valorRetornado
+
+def test_calculaValorDeFitnessObjetivo():
+    valorEsperado = 18
+
+    valorRetornado = main.calculaValorDeFitnessObjetivo()
+
+    assert valorEsperado == valorRetornado

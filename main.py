@@ -67,7 +67,6 @@ def calculaSomatoria(populacaoDeIndividuos):
     somatoriaDasFF = 0
     for individuo in populacaoDeIndividuos:
         somatoriaDasFF = somatoriaDasFF + individuo.valorDeFitness(revisores)
-        print(individuo.valorDeFitness(revisores))
     return somatoriaDasFF
 
 def calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF):
@@ -84,9 +83,9 @@ def escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos):
 		anterior = individuo.__grausDaRoleta + anterior
 
 def selecaoRandomicaDoIndividuoParaReproduzir(populacaoDeIndividuos):
-	somatoriaDasFF = calculaSomatoria(populacaoDeIndividuos, revisores)
-	calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF, revisores)
-	numeroRandomico = random.randrange(1, 361)
+	somatoriaDasFF = calculaSomatoria(populacaoDeIndividuos)
+	calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF)
+	numeroRandomico = random.randrange(1, 360)
 	return escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos)
 
 def reproduzir(individuo1, individuo2, crossoverrate):
@@ -98,9 +97,11 @@ def reproduzir(individuo1, individuo2, crossoverrate):
     tamanhoDoIndividuo = len(individuo1.getArtigos())
     pontoDeDivisaoDoIndividuo = random.randrange(0, tamanhoDoIndividuo)
     novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo] )
-    while(not validarEstado(artigos=novoIndividuo.getArtigos() ) ):
+    
+    while(not validarEstado(novoIndividuo.getArtigos())):
         pontoDeDivisaoDoIndividuo = random.randrange(0, tamanhoDoIndividuo)
-        novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo])
+        novoIndividuo = Individuo.Individuo(individuo1.getArtigos()[0:pontoDeDivisaoDoIndividuo] + individuo2.getArtigos()[pontoDeDivisaoDoIndividuo:tamanhoDoIndividuo] )
+    
     return novoIndividuo
 
 def mutar(individuo, mutationrate, numeroDeRevisores):
@@ -108,69 +109,63 @@ def mutar(individuo, mutationrate, numeroDeRevisores):
 	for posicao in range(0,len(individuo.getArtigos())):
 		if(numeroRandomico < mutationrate):
 			individuo.artigos[posicao] = random.randrange(numeroDeRevisores)
+	
+	while( not validarEstado(individuo.artigos)):
+		numeroRandomico = random.random()
+		for posicao in range(0,len(individuo.getArtigos())):
+			if(numeroRandomico < mutationrate):
+				individuo.artigos[posicao] = random.randrange(numeroDeRevisores)
+	
+def calculaValorDeFitnessObjetivo():
+    fitnessObjetivo = 0
+    for coluna in range (0,len(revisores[0].getListaDeAfinidades())):
+        maior = -1
+        for linha in range (0, len(revisores)):
+            if maior < revisores[linha].getListaDeAfinidades()[coluna]:
+                maior = revisores[linha].getListaDeAfinidades()[coluna]
+        fitnessObjetivo = fitnessObjetivo + maior
+    return fitnessObjetivo
 
-# def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
-# 	valorDeFitnessObjetivo = calculaValorDeFitnessObjetivo()
-# 	geracao = 0
-# 	while maxgen > 0:
-# 		geracao = geracao + 1
-# 		print("Geracao ", geracao)
-
-# 		novaPopulacao = list()
-# 		for x in range(1,(len(populacao))+1):
+def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
+	valorDeFitnessObjetivo = calculaValorDeFitnessObjetivo()
+	geracao = 0
+	print("Populacao inicial")
+	for individuo in populacao:
+		print(individuo.getArtigos())
+	while maxgen > 0:
+		geracao = geracao + 1
+		print("geracao", geracao)
+		novaPopulacao = list()
+		for x in range(1,(len(populacao))+1):
+			#selecao
+			individuo1 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
+			individuo2 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
+			#reproducao
+			filho = reproduzir(individuo1, individuo2, crossoverrate)
+			#mutacao
+			mutar(filho, mutationrate, len(revisores))
 			
-# 			#selecao
-# 			individuo1 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
-# 			individuo2 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
-			
-# 			#reproducao
-# 			filho = reproduzir(individuo1, individuo2, crossoverrate)
-# 			#mutacao
-# 			mutar(filho, mutationrate)
-			
-# 			novaPopulacao.append(filho)
+			novaPopulacao.append(filho)
 
-# 		populacao = novaPopulacao
+		populacao = novaPopulacao
+		for individuo in populacao:
+			print(individuo.getArtigos())
 
-# 		for individuo in populacao:
-# 			print(individuo.cromossomos)
+		maxgen = maxgen - 1
+		melhor = escolheMelhorIndividuo(populacao)
 
-# 		maxgen = maxgen - 1
-# 		melhor = escolheMelhorIndividuo(populacao)
+		if valorDeFitnessObjetivo == melhor.valorDeFitness(revisores):
+			return melhor
 
-# 		if objetivo == melhor.cromossomos:
-# 			return melhor
+	return escolheMelhorIndividuo(populacao)
 
-# 	return escolheMelhorIndividuo(populacao)
+#variaveis para testes
+arquivoDeEntrada = lerArquivoDeEntrada("entrada.txt")
 
-def main():
-    matrizEsperada = [
-        [0,0,3,4,4,1],
-        [3,3,0,0,1,2],
-        [4,0,0,1,0,1],
-        [2,2,2,3,2,2]
-    ]
+criarRevisores(arquivoDeEntrada)
 
-    artigos = [3,2,1,4,4]
+populacao = criarPopulacao()
 
-    revisores = []
-    for vetor in matrizEsperada:
-        revisor = Revisor.Revisor(listaDeAfinidades= vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
-        revisores.append(revisor)
-
-
-    populacao = [
-        [1, 2, 1, 0, 3] ,#3+0+0+4+2=9 9
-        [0, 3, 1, 1, 2], #0+2+0+0+0=2 2
-        [3, 2, 1, 3, 0], #2+0+0+3+4=9 9
-        [3, 1, 0, 3, 1], #2+3+3+3+1=12 12
-        [0, 1, 3, 1, 3], #0+3+2+4+2=11 7
-        [1, 3, 0, 1, 2], #3+2+3+0+0=8 8 
-        [3, 0, 1, 3, 2], #2+0+0+3+0=5 5
-        [1, 0, 3, 3, 1]] #3+0+2+3+1=9 9
-
-    populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
-
-    calculaSomatoria(populacaoDeIndividuos, revisores)
-
-# main()
+populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
+melhor = algoritmoGenetico(populacaoDeIndividuos, 0.70, 0.1, 100000)
+print ("O melhor individuo eh: ", melhor.getArtigos(), "com funcao fitness de ", melhor.valorDeFitness(revisores))
