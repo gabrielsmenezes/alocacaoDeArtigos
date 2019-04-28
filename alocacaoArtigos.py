@@ -3,9 +3,13 @@ import random
 import Individuo
 import sys
 import argparse
-
+import numpy as np
+import matplotlib.pyplot as plt
 #####variaveis#####
 revisores = []
+dadosDasRepeticoes = []
+dadosDasGeracoes = []
+valorDeFitnessObjetivo = 0
 
 def lerArquivoDeEntrada(nomeDoArquivo):
     arquivo = open(nomeDoArquivo)
@@ -131,6 +135,7 @@ def calculaValorDeFitnessObjetivo():
 def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
 	valorDeFitnessObjetivo = calculaValorDeFitnessObjetivo()
 	geracao = 0
+	dadosDasGeracoes=[]
 	print("Populacao inicial")
 	for individuo in populacao:
 		print(individuo.getArtigos())
@@ -155,14 +160,44 @@ def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
 
 		maxgen = maxgen - 1
 		melhor = escolheMelhorIndividuo(populacao)
-
+		dadosDasGeracoes.append(melhor.valorDeFitness(revisores))
 		if valorDeFitnessObjetivo == melhor.valorDeFitness(revisores):
+			dadosDasRepeticoes.append(dadosDasGeracoes)
 			return melhor
-
+	dadosDasRepeticoes.append(dadosDasGeracoes)
 	return escolheMelhorIndividuo(populacao)
 
-def main(args):
+def selecionaMelhorExecucao(dadosDasRepeticoes):
+	melhorExecucao = []
+	melhorFinal = 0
+	for dadoDaRepeticao in dadosDasRepeticoes:
+		if dadoDaRepeticao[-1] > melhorFinal:
+			melhorFinal = dadoDaRepeticao[-1]
+			melhorExecucao = dadoDaRepeticao
+	return melhorExecucao
 
+
+def geraGrafico(melhorExecucao, media):
+	# pontosX = np.linspace(0, len(melhorExecucao), endpoint=True)
+	# pontosY=  np.linspace(melhorExecucao)
+	plt.xlabel('Iterations')
+	plt.ylabel('Fitness value')
+	plt.title('Best Solution vs Average')
+	plt.plot(melhorExecucao)
+	plt.plot(media)
+	plt.savefig('evolucao.png') #esta linha cria um arquivo png com o gráfico
+
+def calculaMediaDasExecucoes(dadosDasRepeticoes):
+	mediaTotal = []
+	for coluna in range(0, len(dadosDasRepeticoes[0])):
+		media = 0	
+		for linha in range(0, len(dadosDasRepeticoes)):
+			media = media + dadosDasRepeticoes[linha][coluna]
+		mediaTotal.append(media/len(dadosDasRepeticoes))
+	return mediaTotal
+
+
+def main(args):
 	crossoverrate = args.crossoverrate
 	mutationrate = args.mutationrate
 	maxgen = args.maxgen
@@ -172,12 +207,22 @@ def main(args):
 
 	criarRevisores(arquivoDeEntrada)
 
-	populacao = criarPopulacao()
 
-	populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
-	melhor = algoritmoGenetico(populacao=populacaoDeIndividuos, crossoverrate=crossoverrate, mutationrate=mutationrate, maxgen=maxgen)
-	print ("O melhor individuo eh: ", melhor.getArtigos(), "com funcao fitness de ", melhor.valorDeFitness(revisores))
+	for i in range (0, 10):	
+		populacao = criarPopulacao()
 
+		populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
+		melhor = algoritmoGenetico(populacao=populacaoDeIndividuos, crossoverrate=crossoverrate, mutationrate=mutationrate, maxgen=maxgen)
+		print ("O melhor individuo eh: ", melhor.getArtigos(), "com funcao fitness de ", melhor.valorDeFitness(revisores))
+		
+
+	melhorExecucao = selecionaMelhorExecucao(dadosDasRepeticoes)
+	
+	media = calculaMediaDasExecucoes(dadosDasRepeticoes)
+
+	print(melhorExecucao, media)
+
+	geraGrafico(melhorExecucao, media)
 
 #variaveis para testes
 if __name__ == "__main__":
