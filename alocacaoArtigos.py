@@ -185,7 +185,7 @@ def geraGrafico(melhorExecucao, media):
 	plt.title('Best Solution vs Average')
 	plt.plot(melhorExecucao)
 	plt.plot(media)
-	plt.savefig('evolucao.png') #esta linha cria um arquivo png com o gráfico
+	plt.savefig('evolucao.png') #esta linha cria um arquivo png com o graafico
 
 def calculaMediaDasExecucoes(dadosDasRepeticoes):
 	mediaTotal = []
