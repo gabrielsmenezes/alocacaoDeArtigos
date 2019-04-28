@@ -63,6 +63,19 @@ def escolheMelhorIndividuo(populacaoDeIndividuos, revisores):
 			melhorIndividuo = individuo
 	return melhorIndividuo
 
+def calculaSomatoria(populacaoDeIndividuos, revisores):
+    somatoriaDasFF = 0
+    for individuo in populacaoDeIndividuos:
+        somatoriaDasFF = somatoriaDasFF + individuo.valorDeFitness(revisores)
+        print(individuo.valorDeFitness(revisores))
+    return somatoriaDasFF
+
+def calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF, revisores):
+    for individuo in populacaoDeIndividuos:
+        grau = (individuo.valorDeFitness(revisores) * 360) / somatoriaDasFF
+        individuo.__grausDaRoleta = grau
+    return populacaoDeIndividuos
+
 def main():
     matrizEsperada = [
         [0,0,3,4,4,1],
@@ -78,8 +91,19 @@ def main():
         revisor = Revisor.Revisor(listaDeAfinidades= vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
         revisores.append(revisor)
 
-    for individuo in criarPopulacao(revisores):
-        print (individuo)
 
+    populacao = [
+        [1, 2, 1, 0, 3] ,#3+0+0+4+2=9 9
+        [0, 3, 1, 1, 2], #0+2+0+0+0=2 2
+        [3, 2, 1, 3, 0], #2+0+0+3+4=9 9
+        [3, 1, 0, 3, 1], #2+3+3+3+1=12 12
+        [0, 1, 3, 1, 3], #0+3+2+4+2=11 7
+        [1, 3, 0, 1, 2], #3+2+3+0+0=8 8 
+        [3, 0, 1, 3, 2], #2+0+0+3+0=5 5
+        [1, 0, 3, 3, 1]] #3+0+2+3+1=9 9
+
+    populacaoDeIndividuos = transformaPopulacaoEmIndividuos(populacao)
+
+    calculaSomatoria(populacaoDeIndividuos, revisores)
 
 # main()

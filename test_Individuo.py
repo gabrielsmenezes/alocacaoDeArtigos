@@ -9,7 +9,7 @@ matrizEsperada = [
         [2,2,2,3,2,2] #revisor 3
     ]
 
-artigos = [2,1,0,3,3]
+artigos = [0, 1, 3, 1, 3]
 
 revisores = []
 for vetor in matrizEsperada:
@@ -18,7 +18,7 @@ for vetor in matrizEsperada:
 
 def test_valorDeFitness():
     individuo = Individuo.Individuo(artigos)
-    valorEsperado = 15
+    valorEsperado = 7
 
     valorRetornado = individuo.valorDeFitness(revisores)
 

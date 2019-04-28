@@ -23,7 +23,7 @@ populacao = [
     [0, 3, 1, 1, 2], #0+2+0+0+0=2
     [3, 2, 1, 3, 0], #2+0+0+3+4=9
     [3, 1, 0, 3, 1], #2+3+3+3+1=12
-    [0, 1, 3, 1, 3], #0+3+2+4+2=11
+    [0, 1, 3, 1, 3], #0+3+2+4+2=7
     [1, 3, 0, 1, 2], #3+2+3+0+0=8
     [3, 0, 1, 3, 2], #2+0+0+3+0=5
     [1, 0, 3, 3, 1]] #3+0+2+3+1=9
@@ -126,3 +126,21 @@ def test_escolheMelhorIndividuo():
 	valorRetornado = main.escolheMelhorIndividuo(populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores).getArtigos()
 
 	assert valorEsperado == valorRetornado
+
+def test_calculaSomatoria():
+
+	valorEsperado = 61
+
+	valorRetornado = main.calculaSomatoria(populacaoDeIndividuos=populacaoDeIndividuos, revisores=revisores)
+
+	assert valorEsperado == valorRetornado
+
+def test_calculaGrauDaRoleta():
+	#arrange
+	valorEsperado = 53
+	#action
+	populacao = main.calculaGrauDaRoleta(populacaoDeIndividuos=populacaoDeIndividuos, somatoriaDasFF=61, revisores=revisores)
+	valorRetornado = populacaoDeIndividuos[0].__grausDaRoleta
+	#assert
+	assert valorEsperado == valorRetornado
+
