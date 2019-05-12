@@ -1,3 +1,7 @@
+#RGA: 201619040476 Nome: Victor Ezequiel Queiroz Alves
+#RGA: 201619060051 Nome: Gabriel Menezes
+#RGA: 201619040301 Nome: Matheus Henrique Fernandes Soares
+
 import Revisor
 import random
 import Individuo
@@ -5,11 +9,14 @@ import sys
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+
 #####variaveis#####
 revisores = []
 dadosDasRepeticoes = []
 dadosDasGeracoes = []
 valorDeFitnessObjetivo = 0
+
 
 def lerArquivoDeEntrada(nomeDoArquivo):
     arquivo = open(nomeDoArquivo)
@@ -22,14 +29,17 @@ def lerArquivoDeEntrada(nomeDoArquivo):
         matriz.append(vetor)
     return matriz
 
+
 def criarRevisores(matriz):
     for vetor in matriz:
         revisor = Revisor.Revisor(listaDeAfinidades=vetor[:len(vetor)-1], quantidadeMaximaDeArtigos=vetor[len(vetor)-1])
         revisores.append(revisor)
 
+#Caso todos os artigos tenham revisor retorna True, caso contrario False
 def todosArtigosComRevisor(artigos):
     return not -1 in artigos
 
+#Calcula o numero maximo de artigos que cada revisor deseja revisar
 def limiteArtigosParaCadaRevisor(artigos):
     numeroDeArtigosParaCadaRevisor = [0] * len(revisores)
     for i in range (len(artigos)):
@@ -39,9 +49,11 @@ def limiteArtigosParaCadaRevisor(artigos):
             return False
     return True
 
+#Valida se o estado gerado atende as exigencias do problema (respeitar o numero max de artigos por revisor e todos os artigos ter um revisor)
 def validarEstado(artigos):
     return todosArtigosComRevisor(artigos) and limiteArtigosParaCadaRevisor(artigos)
 
+#Cria a populacao de individuos de forma aleatoria 
 def criarPopulacao():
     populacao = []
     for j in range(1, 9):
@@ -56,12 +68,14 @@ def criarPopulacao():
         populacao.append(artigos)
     return populacao
 
+#Mapeamento de uma lista de inteitors para uma classe 
 def transformaPopulacaoEmIndividuos(populacao):
     populacaoDeIndividuos = []
     for individuo in populacao:
         populacaoDeIndividuos.append(Individuo.Individuo(artigos=individuo))
     return populacaoDeIndividuos
 
+#faz a selecao do melhor dentro da individuo
 def escolheMelhorIndividuo(populacaoDeIndividuos):
 	melhorIndividuo = populacaoDeIndividuos[0]
 	for individuo in populacaoDeIndividuos:
@@ -69,18 +83,22 @@ def escolheMelhorIndividuo(populacaoDeIndividuos):
 			melhorIndividuo = individuo
 	return melhorIndividuo
 
+#calcula a soma do valor de fitness de todos os individuos
 def calculaSomatoria(populacaoDeIndividuos):
     somatoriaDasFF = 0
     for individuo in populacaoDeIndividuos:
         somatoriaDasFF = somatoriaDasFF + individuo.valorDeFitness(revisores)
     return somatoriaDasFF
 
+
+#Calcula a faixa de valores de cada um dos individuos
 def calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF):
     for individuo in populacaoDeIndividuos:
         grau = (individuo.valorDeFitness(revisores) * 360) / somatoriaDasFF
         individuo.__grausDaRoleta = grau
     return populacaoDeIndividuos
 
+#Seleciona um individuo dentro da populacao
 def escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos):
 	anterior = 0
 	for individuo in populacaoDeIndividuos:
@@ -88,12 +106,14 @@ def escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos):
 			return individuo
 		anterior = individuo.__grausDaRoleta + anterior
 
+
 def selecaoRandomicaDoIndividuoParaReproduzir(populacaoDeIndividuos):
 	somatoriaDasFF = calculaSomatoria(populacaoDeIndividuos)
 	calculaGrauDaRoleta(populacaoDeIndividuos, somatoriaDasFF)
 	numeroRandomico = random.randrange(1, 360)
 	return escolheIndividuoDaRoleta(numeroRandomico, populacaoDeIndividuos)
 
+#Faz a reproducao
 def reproduzir(individuo1, individuo2, crossoverrate):
     numeroRandomico = random.random()
 
@@ -110,6 +130,7 @@ def reproduzir(individuo1, individuo2, crossoverrate):
     
     return novoIndividuo
 
+#Faz a mutacao
 def mutar(individuo, mutationrate, numeroDeRevisores):
 	numeroRandomico = random.random()
 	for posicao in range(0,len(individuo.getArtigos())):
@@ -121,7 +142,8 @@ def mutar(individuo, mutationrate, numeroDeRevisores):
 		for posicao in range(0,len(individuo.getArtigos())):
 			if(numeroRandomico < mutationrate):
 				individuo.artigos[posicao] = random.randrange(numeroDeRevisores)
-	
+
+#Calcula o valor de fitness	
 def calculaValorDeFitnessObjetivo():
     fitnessObjetivo = 0
     for coluna in range (0,len(revisores[0].getListaDeAfinidades())):
@@ -132,6 +154,7 @@ def calculaValorDeFitnessObjetivo():
         fitnessObjetivo = fitnessObjetivo + maior
     return fitnessObjetivo
 
+#Metodo do algoritmo em si
 def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
 	valorDeFitnessObjetivo = calculaValorDeFitnessObjetivo()
 	geracao = 0
@@ -143,6 +166,11 @@ def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
 		geracao = geracao + 1
 		print("geracao", geracao)
 		novaPopulacao = list()
+		for i in range(0,2):
+			melhorIndividuoAtual = escolheMelhorIndividuo(populacao)
+			populacao.remove(melhorIndividuoAtual)
+			novaPopulacao.append(melhorIndividuoAtual)
+		
 		for x in range(1,(len(populacao))+1):
 			#selecao
 			individuo1 = selecaoRandomicaDoIndividuoParaReproduzir(populacao)
@@ -167,6 +195,7 @@ def algoritmoGenetico(populacao, crossoverrate, mutationrate, maxgen):
 	dadosDasRepeticoes.append(dadosDasGeracoes)
 	return escolheMelhorIndividuo(populacao)
 
+
 def selecionaMelhorExecucao(dadosDasRepeticoes):
 	melhorExecucao = []
 	melhorFinal = 0
@@ -183,8 +212,9 @@ def geraGrafico(melhorExecucao, media):
 	plt.xlabel('Iterations')
 	plt.ylabel('Fitness value')
 	plt.title('Best Solution vs Average')
-	plt.plot(melhorExecucao)
-	plt.plot(media)
+	plt.plot(melhorExecucao, label='Best Solution')
+	plt.plot(media, label='Average')
+	plt.legend()
 	plt.savefig('evolucao.png') #esta linha cria um arquivo png com o graafico
 
 def calculaMediaDasExecucoes(dadosDasRepeticoes):
@@ -220,7 +250,7 @@ def main(args):
 	
 	media = calculaMediaDasExecucoes(dadosDasRepeticoes)
 
-	print(melhorExecucao, media)
+	# print(melhorExecucao, media)
 
 	geraGrafico(melhorExecucao, media)
 
@@ -234,5 +264,8 @@ if __name__ == "__main__":
 	parser.add_argument("-inputpath", type=str, required=True)
 
 	args = parser.parse_args()
-	
-	main(args)	
+
+	inicio = time.time()
+	main(args)
+	fim = time.time()
+	print(fim - inicio)

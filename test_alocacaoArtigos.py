@@ -1,3 +1,6 @@
+#RGA: 201619040476 Nome: Victor Ezequiel Queiroz Alves
+#RGA: 201619060051 Nome: Gabriel Menezes
+#RGA: 201619040301 Nome: Matheus Henrique Fernandes Soares
 import pytest
 import alocacaoArtigos, Revisor
 
